@@ -21,23 +21,19 @@ void setup() {
 
   SCREENFIFTH = height / 5;
   WIDTHFIFTH = width / 5;
+ 
   cp5 = new ControlP5(this);
-
-  String disable = "";
-  if (pan) {
-    disable = "disable ";
-  }
   myButton = cp5.addButton("Button")
     .setPosition(SCREENFIFTH, 4 * SCREENFIFTH + (SCREENFIFTH / 3))
     .setSize(200, 40)
-    .setCaptionLabel("Click to " + disable + "pan");
-
+    .setCaptionLabel("Click to Pan");
+    
   mySlider = cp5.addSlider("Zoom")
     .setPosition(2 * SCREENFIFTH + 220, 4 * SCREENFIFTH + (SCREENFIFTH / 3))
     .setSize(200, 40)
     .setRange(0, 100)
     .setValue(0);
-
+    
   mask = createGraphics(width, height);
   mask.beginDraw();
   mask.background(255); // Set the initial mask background to white
@@ -50,7 +46,7 @@ void draw() {
   PImage spacebg = loadImage("space.jpg");
   spacebg.resize(width, height);
   background(spacebg);
-
+  panLabeling();
   float aspectRatio = (float) img.width / img.height;
   float adjustedWidth = width * zoomFactor;
   float adjustedHeight = adjustedWidth / aspectRatio;
@@ -63,7 +59,22 @@ void draw() {
 
   // Apply zoom and pan
   image(img, imgX + offsetX, imgY + offsetY, adjustedWidth, adjustedHeight);
+  pov();
+  fill(150);
+  rect(0, 4 * SCREENFIFTH, width, SCREENFIFTH);
+  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
+  cp5.update();
+}
 
+void panLabeling(){
+  if (pan) {
+    myButton.getCaptionLabel().setText("Click to Disable Pan");
+  } else {
+    myButton.getCaptionLabel().setText("Click to Pan");
+  }
+}
+
+void pov(){
   if (zoomFactor >= 1.3) {
     // Update the mask position to follow the mouse
     mask.beginDraw();
@@ -83,10 +94,6 @@ void draw() {
     mask.endDraw();
   }
 
-  fill(150);
-  rect(0, 4 * SCREENFIFTH, width, SCREENFIFTH);
-  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
-  cp5.update();
 }
 
 void Zoom(float theValue) {
