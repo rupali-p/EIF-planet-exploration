@@ -2,6 +2,10 @@ import controlP5.*;
 import processing.core.PImage;
 import processing.core.PVector;
 import java.util.HashMap;
+import processing.core.PApplet;
+
+PApplet app;
+
 
 PImage img;
 float zoomFactor = 1.0;
@@ -22,15 +26,13 @@ boolean button2Clicked = false;
 boolean button3Clicked = false;
 
 void setup() {
-  size(900, 600);
-  img = loadImage("moonwalk.jpg");
-  img.resize(width, height);
+  size(900, 600, P3D);
+  cp5 = new ControlP5(this);
   zoomCenter = new PVector(width / 2, height / 2);
 
   HEIGHTFIFTH = height / 5;
   WIDTHFIFTH = width / 5;
 
-  cp5 = new ControlP5(this);
   panButton = cp5.addButton("PanButton")
     .setPosition(HEIGHTFIFTH, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
     .setSize(200, 40)
@@ -78,18 +80,28 @@ void draw() {
   spacebg.resize(width, height);
   background(spacebg);
   panLabeling();
-  float aspectRatio = (float) img.width / img.height;
-  float adjustedWidth = width * zoomFactor;
-  float adjustedHeight = adjustedWidth / aspectRatio;
-
-  float imgX = 0;
-  float imgY = 0;
-
-  float offsetX = (width / 2 - zoomCenter.x) * (1 - zoomFactor);
-  float offsetY = (height / 2 - zoomCenter.y) * (1 - zoomFactor);
-
-  // Apply zoom and pan
-  image(img, imgX + offsetX, imgY + offsetY, adjustedWidth, adjustedHeight);
+  
+  pov();
+  pushMatrix();
+    //float newZoom = Zoom(mySlider.getValue());
+    float cameraZ = 300 / tan(PI/6); // Fixed camera distance for zoom
+    Zoom(mySlider.getValue());
+    if (zoomFactor >= 1.3){
+      pov();
+    }else{
+      perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
+      translate(width / 2, height / 2);
+      scale(zoomFactor);
+    
+      lights();
+      fill(0); // White sphere
+      noStroke();
+      sphere(100);
+      fill(150);
+      rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
+    }
+  popMatrix();
+  
   pov();
   fill(150);
   rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
@@ -134,6 +146,8 @@ void panLabeling() {
 void pov() {
   if (zoomFactor >= 1.3) {
     // Update the mask position to follow the mouse
+    img = loadImage("moonwalk.jpg");
+    image(img, 60, 60);
     mask.beginDraw();
     mask.background(255); // Clear the mask
     mask.noStroke();
