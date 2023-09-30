@@ -7,13 +7,19 @@ PImage img;
 float zoomFactor = 1.0;
 PVector zoomCenter;
 ControlP5 cp5;
-Button myButton;
+Button panButton;
+Button button1;
+Button button2;
+Button button3;
 Slider mySlider;
 int HEIGHTFIFTH;
 int WIDTHFIFTH;
 boolean pan = false;
 PGraphics mask;
 HashMap<String, String> textMap; // Map to store dynamic texts
+boolean button1Clicked = false;
+boolean button2Clicked = false;
+boolean button3Clicked = false;
 
 void setup() {
   size(900, 600);
@@ -25,10 +31,25 @@ void setup() {
   WIDTHFIFTH = width / 5;
 
   cp5 = new ControlP5(this);
-  myButton = cp5.addButton("Button")
+  panButton = cp5.addButton("PanButton")
     .setPosition(HEIGHTFIFTH, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
     .setSize(200, 40)
     .setCaptionLabel("Click to Pan");
+
+  button1 = cp5.addButton("Button1")
+    .setPosition(4 * WIDTHFIFTH + 20, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 1");
+
+  button2 = cp5.addButton("Button2")
+    .setPosition(4 * WIDTHFIFTH + 70, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 2");
+
+  button3 = cp5.addButton("Button3")
+    .setPosition(4 * WIDTHFIFTH + 120, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 3");
 
   mySlider = cp5.addSlider("Zoom")
     .setPosition(2 * HEIGHTFIFTH + 220, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
@@ -104,9 +125,9 @@ void draw() {
 
 void panLabeling() {
   if (pan) {
-    myButton.getCaptionLabel().setText("Click to Disable Pan");
+    panButton.getCaptionLabel().setText("Click to Disable Pan");
   } else {
-    myButton.getCaptionLabel().setText("Click to Pan");
+    panButton.getCaptionLabel().setText("Click to Pan");
   }
 }
 
@@ -147,4 +168,28 @@ void mousePressed() {
       pan = true;
     }
   }
+  
+  // Check if any of the additional buttons were clicked
+  if (mouseX >= 4 * WIDTHFIFTH + 20 && mouseX <= 4 * WIDTHFIFTH + 60 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button1Clicked = !button1Clicked;
+  }
+  if (mouseX >= 4 * WIDTHFIFTH + 70 && mouseX <= 4 * WIDTHFIFTH + 110 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button2Clicked = !button2Clicked;
+  }
+  if (mouseX >= 4 * WIDTHFIFTH + 120 && mouseX <= 4 * WIDTHFIFTH + 160 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button3Clicked = !button3Clicked;
+  }
+  
+  // Print which buttons have been clicked
+  switchButtons();
+}
+
+
+void switchButtons() {
+  println("Button 1 clicked: " + button1Clicked);
+  println("Button 2 clicked: " + button2Clicked);
+  println("Button 3 clicked: " + button3Clicked);
 }
