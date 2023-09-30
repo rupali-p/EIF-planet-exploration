@@ -141,7 +141,7 @@ void pov() {
 
     if (pan) {
       // Draw an inverted semi-circle in the mask when panning
-      mask.arc(map(mouseX, 0, width, 1.7 *  HEIGHTFIFTH, width - 2.7 * WIDTHFIFTH), (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
+      mask.arc(map(mouseX, 0, width, 1.7 *  WIDTHFIFTH, width - 2.7 * WIDTHFIFTH), (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
     } else {
       // Draw a semi-circle in the mask when not panning
       mask.arc((width / 2) - width / 10, (height / 2) + height/4.2 , width/1.5, 1.4 * height, PI, TWO_PI);
