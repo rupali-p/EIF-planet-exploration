@@ -2,11 +2,9 @@ class Planet {
  
   void CreatePlanetMain(FloatList colour, FloatList shape, float phase, float avgTemp) {
     push();
-
-    rotateX(phase/2);
+      rotateX(phase/2);
     rotateY(phase/2);
     rotateZ(phase/2);
-
     for (int i = 0; i < total + 1; i++) {
       float lat = map(i, 0, total, 0, PI);
 
@@ -21,7 +19,7 @@ class Planet {
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = map(pNoise, 0, 1, 100, 120);
+        float r = map(pNoise, 0, 1, 100, 120); //MAKE THIS ADJUSTABLE
 
         float x = r * sin(lat) * cos(lon);
         float y = r * sin(lat) * sin(lon);
@@ -76,7 +74,8 @@ class Planet {
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = 120;
+        float r = map(pNoise, 0, 1, 115, 125);
+
 
         float x = r * sin(lat) * cos(lon);
         float y = r * sin(lat) * sin(lon);
@@ -92,7 +91,7 @@ class Planet {
             float cNoise = noise(phase + thisTemp + colorMutator * v1.x, phase + thisTemp + colorMutator * v1.y, phase + thisTemp + colorMutator * v1.z);
             float hu = map(cNoise, 0, 1, 0, 255);
             noFill();
-            fill(255, hu/2);
+            fill(255, hu/3);
           }
           vertex(v1.x, v1.y, v1.z);
           vertex(v2.x, v2.y, v2.z);
