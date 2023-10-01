@@ -130,52 +130,48 @@ void setup(){
   hint(ENABLE_DEPTH_TEST);
 }
 
-void draw(){
+void draw() {
   background(backgroundImg);
   panLabeling();
-  
- if(isCamActive){
-    cam.setActive(true);
-  } else {
-    cam.setActive(false);
+  if(isCamActive){
+      cam.setActive(true);
+   } else {
+      cam.setActive(false);
   }
-
-  pushMatrix();
-  translate(2 * WIDTHFIFTH, 2 * HEIGHTFIFTH);
-  if (displayPlanets){
+  println("cam active: " + isCamActive);
+  if (displayPlanets) {
+    cam.beginHUD();
+    translate(2 * WIDTHFIFTH, 2 * HEIGHTFIFTH);
+    pushMatrix();
     sun.display();
     sun.orbit();
+    gui();
+    popMatrix();
+    cam.endHUD();
   }
-  float cameraZ = 300 / tan(PI/6); // Fixed camera distance for zoom
+
+  float cameraZ = 300 / tan(PI/6);
   Zoom(mySlider.getValue());
-  if (zoomFactor >= ZOOMTHRESHOLD){
+
+  if (zoomFactor >= ZOOMTHRESHOLD) {
     pov();
-  }else{
+  } else {
     displayPlanets = true;
     perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
     translate(width / 2, height / 2);
     scale(zoomFactor);
-  
     lights();
-    fill(0); // White sphere
-    noStroke();
-    sphere(100);
     hint(DISABLE_DEPTH_TEST);
-    fill(150);
-    rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
-    //rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
-    hint(ENABLE_DEPTH_TEST);
   }
-  popMatrix();
-  pov();
-  
   hint(DISABLE_DEPTH_TEST);
+  cam.beginHUD();
   fill(150);
   rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
   rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
   displayText();
+  cam.endHUD();
   hint(ENABLE_DEPTH_TEST);
-  gui();  
+  gui();
 }
 
 void ToggleCam(boolean val){
@@ -209,7 +205,7 @@ void panLabeling() {
   } else {
     panButton.getCaptionLabel().setText("Click to Pan");
   }
-      println(pan);
+  println("pan: " + pan);
 }
 
 void pov() {
