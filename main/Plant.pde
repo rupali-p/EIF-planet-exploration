@@ -20,7 +20,7 @@ class Planet {
     noFill();
 
     thisPlanet = CreatePlanetMain(colour, shape);
-    println(thisPlanet);
+    println(thisPlanet.isVisible());
 
     println("Planet should be created");
     //globe.setTexture(image);
@@ -72,12 +72,13 @@ class Planet {
 
   PShape CreatePlanetMain(FloatList colour, FloatList shape) {
     PShape thisShape = createShape();
-    pushMatrix();
 
+    pushMatrix();
+        beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < total + 1; i++) {
       float lat = map(i, 0, total, 0, PI);
 
-    beginShape(TRIANGLE_STRIP);
+
       for (int j = 0; j < total + 1; j++) {
         float lon = map(j, 0, total, 0, TWO_PI);
 

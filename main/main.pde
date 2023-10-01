@@ -104,7 +104,6 @@ void setup(){
   backgroundImg = loadImage("space3.jpg");
   backgroundImg.resize(width, height);
   image(backgroundImg, 0, 0);
-  sunImage = loadImage("sun.jpg");
   
   sound = new SoundFile(this, "music1.mp3");
   sound.amp(volume);
@@ -126,13 +125,6 @@ void setup(){
      .setRange(0, 0.01)
      .setDecimalPrecision(3)
      .setValue(0.005);
-  
- /*planetImages = new PImage[4];
-  planetImages[0] = loadImage("earth.jpg");
-  planetImages[1] = loadImage("jupiter.jpg");
-  planetImages[2] = loadImage("mars.jpg");
-  planetImages[3] = loadImage("neptune.jpg");*/
-  
 
   zoomCenter = new PVector(width / 2, height / 2);
 
