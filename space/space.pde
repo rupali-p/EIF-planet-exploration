@@ -48,7 +48,7 @@ void setup(){
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(5);
   cam.setMaximumDistance(1000);
-
+  
   //slider for the volume of the sound
   cp5 = new ControlP5(this);
   cp5.addSlider("volume")
@@ -134,9 +134,9 @@ void draw() {
   background(backgroundImg);
   panLabeling();
   if(isCamActive){
-      cam.setActive(true);
-   } else {
-      cam.setActive(false);
+    cam.setActive(true);
+  } else {
+    cam.setActive(false);
   }
   println("cam active: " + isCamActive);
   if (displayPlanets) {
