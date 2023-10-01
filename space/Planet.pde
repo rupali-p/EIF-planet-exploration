@@ -24,7 +24,7 @@ class Planet{
   }
   
   void childrenPlanets(int num){
-
+    
     this.planets = new Planet[num];
     for(int i = 0; i < planets.length; i++){
       float r = radius*0.35;
