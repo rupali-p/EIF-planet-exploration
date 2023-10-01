@@ -73,8 +73,8 @@ class Planet {
   PShape CreatePlanetMain(FloatList colour, FloatList shape) {
     PShape thisShape = createShape();
 
-    pushMatrix();
-        beginShape(TRIANGLE_STRIP);
+  //  pushMatrix();
+        thisShape.beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < total + 1; i++) {
       float lat = map(i, 0, total, 0, PI);
 
@@ -106,20 +106,20 @@ class Planet {
             float hu = map(cNoise, 0, 1, 0, 255);
 
             if (thisTemp > maxTempValue - tempRange/3) {
-              thisShape.setFill(color(255, 255, hu));
+              thisShape.fill(255, 255, hu);
             } else if (thisTemp < minTempValue + tempRange/3) {
-              thisShape.setFill(color(hu, 255, 255));
+              thisShape.fill(hu, 255, 255);
             } else {
-              thisShape.setFill(color(255, hu, 255));
+              thisShape.fill(255, hu, 255);
             }
           }
-          vertex(v1.x, v1.y, v1.z);
-          vertex(v2.x, v2.y, v2.z);
+          thisShape.vertex(v1.x, v1.y, v1.z);
+          thisShape.vertex(v2.x, v2.y, v2.z);
         }
       }
-      endShape();
+      thisShape.endShape();
     }
-    popMatrix();
+   // popMatrix();
     return thisShape;
   }
 }

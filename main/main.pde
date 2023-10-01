@@ -401,14 +401,6 @@ void CompleteDataSetup() {
   }
   avgTemp = totalTemp / tempDayCount;
   tempRange = maxTempValue - minTempValue;
-
-  //RAIN DATA SET UP
-  rains = new FloatList();
-  monthrains1 = new FloatList();
-  monthrains2 = new FloatList();
-  monthrains3 = new FloatList();
-  monthrains4 = new FloatList();
-
   rainTable = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2022-01-28T00%3A00&rToDate=2022-12-31T23%3A59%3A59&rFamily=weather&rSensor=RT", "csv");
   rowCount = rainTable.getRowCount();
   currentRowCountTest = rowCount/365;
