@@ -6,7 +6,7 @@ class Planet{
   float distance;
   float orbitSpeed;
   Planet planets[];
-  PShape globe;
+  PShape Globe;
   PVector v;
   
   Planet(float r, float d, float angle, float orbitSpeed, PImage image){
@@ -19,8 +19,8 @@ class Planet{
     this.orbitSpeed = orbitSpeed;
     noStroke();
     noFill();
-    globe = createShape(SPHERE, radius);
-    globe.setTexture(image);
+    Globe = createShape(SPHERE, radius);
+    Globe.setTexture(image);
   }
   
   void childrenPlanets(int num){
@@ -30,8 +30,7 @@ class Planet{
       float r = radius*0.35;
       float d = random(200, 250);
       float angle = angles[i];
-      planets[i] = new Planet(r, d, angle, speed, planetImages[i]);
-      println(d);
+      planets[i] = new Planet(r, d, angle, speedOrbit, planetImages[i]);
     }
   }
   
@@ -53,15 +52,16 @@ class Planet{
     PVector perpen = v.cross(v2);
     rotate(angle, perpen.x, perpen.y, perpen.z);
     translate(v.x, v.y, v.z);
-    shape(globe);
+    shape(Globe);
     
-    
-    
+   
     if(planets != null) {
       for(int i = 0; i < planets.length; i++){
+        
         planets[i].display();
       }
     }
     popMatrix();
   }
+  
 }
