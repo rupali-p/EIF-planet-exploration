@@ -9,7 +9,7 @@ class Planet{
   
   Planet(float r, float d, float angle, float orbitSpeed, PImage image){
     //v = PVector.random3D();
-    v = new PVector(1, -0.5, 0);
+    v = new PVector(1, -0.2, 0);
     radius = r;
     distance = d;
     v.mult(distance);
@@ -24,11 +24,10 @@ class Planet{
   void childrenPlanets(int num){
     this.planets = new Planet[num];
     for(int i = 0; i < planets.length; i++){
-      float r = random(radius*0.25, radius*0.35);
+      float r = radius*0.35;
       float d = random(200, 250);
       float angle = random(TWO_PI);
-      float orbitS = random(0.005, 0.01);
-      planets[i] = new Planet(r, d, angle, orbitS, planetImages[i]);
+      planets[i] = new Planet(r, d, angle, speed, planetImages[i]);
       println(d);
     }
   }
@@ -52,8 +51,9 @@ class Planet{
     rotate(angle, perpen.x, perpen.y, perpen.z);
     translate(v.x, v.y, v.z);
     shape(globe);
-    //sphere(radius);
-    //ellipse(0, 0, radius*2, radius*2);
+    
+    
+    
     if(planets != null) {
       for(int i = 0; i < planets.length; i++){
         planets[i].display();
