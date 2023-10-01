@@ -82,6 +82,12 @@ void setup() {
   planet3 = new Planet();
   planet4 = new Planet();
 
+    //INSTANTIATE PLANETS
+  planet1 = new Planet();
+  planet2 = new Planet();
+  planet3 = new Planet();
+  planet4 = new Planet();
+
   //TEMPERATURE DATA SET UP
   temps = new FloatList();
   monthtemps1 = new FloatList();
@@ -103,7 +109,6 @@ void setup() {
   monthsolars3 = new FloatList();
   monthsolars4 = new FloatList();
 }
-
 float xoff = 0;
 
 void draw() {
@@ -114,17 +119,21 @@ void draw() {
 
   background(0);
   noStroke();
-  translate(100, 300, 0);
+  translate(height/2, width/2, 0);
   
+  fill(255, 255, 255);
+  sphere(100);
+      rotateY(phase * 2);
+       translate(-200, 0, 0);
+  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp);
+//  planet1.CreatePlanetAtmosphere(monthrains4, phase);
+ planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp);
+  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp);
+   planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp);
 
+ // translate(400, 0, 0);
 
-  planet1.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp);
-  planet1.CreatePlanetAtmosphere(monthrains4, phase);
-
-
-  translate(400, 0, 0);
-  planet2.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp);
-  planet2.CreatePlanetAtmosphere(monthrains1, phase);
+ // planet2.CreatePlanetAtmosphere(monthrains1, phase);
 
   phase += speed;
 }
