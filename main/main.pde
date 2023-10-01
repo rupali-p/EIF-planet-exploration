@@ -251,13 +251,13 @@ void displayText(){
   // Determine the appropriate text based on zoomFactor and pan state
   String currentTextKey = "";
   if (pan) {
-    if (zoomFactor >= 1.3) {
+    if (zoomFactor >= THRESHOLD) {
       currentTextKey = "PanEnabledThresholdCrossed";
     } else {
       currentTextKey = "PanEnabled";
     }
   } else {
-    if (zoomFactor >= 1.3) {
+    if (zoomFactor >= THRESHOLD) {
       currentTextKey = "PanDisabledThresholdCrossed";
     } else {
       currentTextKey = "PanDisabled";
