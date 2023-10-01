@@ -1,6 +1,10 @@
 import controlP5.*;
 ControlP5 cp5;
 
+import peasy.*;
+PeasyCam cam;
+boolean isCamActive = false;
+
 import processing.sound.*;
 SoundFile sound;
 float volume = 0.5;
@@ -21,6 +25,10 @@ void setup(){
   sound.amp(volume);
   sound.loop();
   
+  cam = new PeasyCam(this, 500);
+  cam.setMinimumDistance(5);
+  cam.setMaximumDistance(1000);
+  
   //slider for the volume of the sound
   cp5 = new ControlP5(this);
   cp5.addSlider("volume")
@@ -37,6 +45,13 @@ void setup(){
      .setRange(0, 0.01)
      .setDecimalPrecision(3)
      .setValue(0.005);
+     
+  cp5.addToggle("ToggleCam")
+     .setPosition(100, 110)
+     .setSize(80, 20)
+     .setValue(isCamActive);
+     
+  cp5.setAutoDraw(false);
   
   planetImages = new PImage[4];
   planetImages[0] = loadImage("earth.jpg");
@@ -53,12 +68,30 @@ void draw(){
   background(backgroundImg);
   
   pushMatrix();
-  translate(width/2, height/2);
+  //translate(width/2, height/2);
   sun.display();
   sun.orbit();
   popMatrix(); 
   
+  if(isCamActive){
+    cam.setActive(true);
+  } else {
+    cam.setActive(false);
+  }
   
+  gui();  
+}
+
+void ToggleCam(boolean val){
+  isCamActive = val;
+}
+
+void gui() {
+  hint(DISABLE_DEPTH_TEST);
+  cam.beginHUD();
+  cp5.draw();
+  cam.endHUD();
+  hint(ENABLE_DEPTH_TEST);
 }
 
 void volume(float vol){
