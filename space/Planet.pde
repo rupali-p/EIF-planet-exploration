@@ -1,5 +1,3 @@
-float[] angles = {radians(0), radians(90), radians(180), radians(270)};
-
 class Planet{
   float radius;
   float angle;
@@ -24,12 +22,11 @@ class Planet{
   }
   
   void childrenPlanets(int num){
-    
     this.planets = new Planet[num];
     for(int i = 0; i < planets.length; i++){
       float r = radius*0.35;
       float d = random(200, 250);
-      float angle = angles[i];
+      float angle = random(TWO_PI);
       planets[i] = new Planet(r, d, angle, speed, planetImages[i]);
       println(d);
     }
@@ -59,6 +56,7 @@ class Planet{
     
     if(planets != null) {
       for(int i = 0; i < planets.length; i++){
+        scale(zoomFactor);
         planets[i].display();
       }
     }
