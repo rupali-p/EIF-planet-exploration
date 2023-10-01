@@ -59,6 +59,7 @@ class Planet{
     
     if(planets != null) {
       for(int i = 0; i < planets.length; i++){
+        scale(zoomFactor);
         planets[i].display();
       }
     }
