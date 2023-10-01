@@ -3,13 +3,17 @@ PVector[][] globe;
 int total;
 float phase = 0;
 float colorMutator = 0.04;
-float speed = 0.03;
+float speed = 0.004;
 
 int rowCount;
 
 int lasti;
 
 boolean dataSetup = false;
+
+int daysPassed; 
+int count;
+//int framerate; 
 
 //PLANETS
 FPlanet planet1;
@@ -85,20 +89,21 @@ PImage sunImage;
 PImage[] planetImages;
 PImage backgroundImg;
 
-void setup(){
+void setup() {
+ // frameRate(120);
   size(1074, 647, P3D);
   backgroundImg = loadImage("space3.jpg");
   image(backgroundImg, 0, 0);
   sunImage = loadImage("sun.jpg");
-  
+
   ///////////////////////////////////////////////////////////////////////////
   colorMode(HSB, 255);
-  
+
   planet1 = new FPlanet();
   planet2 = new FPlanet();
   planet3 = new FPlanet();
   planet4 = new FPlanet();
-  
+
   //frameRate(20);
   //TEMPERATURE DATA SET UP
   temps = new FloatList();
@@ -106,14 +111,14 @@ void setup(){
   monthtemps2 = new FloatList();
   monthtemps3 = new FloatList();
   monthtemps4 = new FloatList();
-  
-   //RAIN DATA SETUP
+
+  //RAIN DATA SETUP
   rains = new FloatList();
   monthrains1 = new FloatList();
   monthrains2 = new FloatList();
   monthrains3 = new FloatList();
   monthrains4 = new FloatList();
-  
+
   //SOLAR DATA SETUP
   solars = new FloatList();
   monthsolars1 = new FloatList();
@@ -121,57 +126,56 @@ void setup(){
   monthsolars3 = new FloatList();
   monthsolars4 = new FloatList();
   ///////////////////////////////////////////////////////////////////////////
-  
+
   sound = new SoundFile(this, "music1.mp3");
   sound.amp(volume);
   sound.loop();
-  
+
   cam = new PeasyCam(this, 500);
   cam.setMinimumDistance(5);
   cam.setMaximumDistance(1000);
-  
+
   //slider for the volume of the sound
   cp5 = new ControlP5(this);
   cp5.addSlider("volume")
-     .setPosition(100, 30)
-     .setSize(300, 20)
-     .setRange(0, 1)
-     .setValue(0.5)
-     ;
-     
-  //slider for controlling the speed of the planets   
+    .setPosition(100, 30)
+    .setSize(300, 20)
+    .setRange(0, 1)
+    .setValue(0.5)
+    ;
+
+  //slider for controlling the speed of the planets
   cp5.addSlider("speedOrbit")
-     .setPosition(100, 70)
-     .setSize(300, 20)
-     .setRange(0, 0.01)
-     .setDecimalPrecision(3)
-     .setValue(0.005);
-  
+    .setPosition(100, 70)
+    .setSize(300, 20)
+    .setRange(0, 0.01)
+    .setDecimalPrecision(3)
+    .setValue(0.005);
+
   //toggle cam
   cp5.addToggle("ToggleCam")
-     .setPosition(100, 110)
-     .setSize(80, 20)
-     .setValue(isCamActive);
-     
+    .setPosition(100, 110)
+    .setSize(80, 20)
+    .setValue(isCamActive);
+
   cp5.setAutoDraw(false);
-  
+
   // the surface images for 4 planets
   planetImages = new PImage[4];
   planetImages[0] = loadImage("earth.jpg");
   planetImages[1] = loadImage("jupiter.jpg");
   planetImages[2] = loadImage("mars.jpg");
   planetImages[3] = loadImage("neptune.jpg");
-  
+
   //create a new planet called sun
   sun = new Planet(100, 0, 0, 0, sunImage);
-  sun.childrenPlanets(4); //sun has 4 children planets
-      
+  //sun.childrenPlanets(4); //sun has 4 children planets
 }
 ////////////////////////////////////////////////////
 float xoff = 0;
 ////////////////////////////////////////////////////
 
-void draw(){
+void draw() {
   background(backgroundImg);
   ////////////////////////////////////////////////////
   if (!dataSetup) {
@@ -179,39 +183,64 @@ void draw(){
     dataSetup = true;
   }
   ////////////////////////////////////////////////////
-  
+
   pushMatrix();
   //translate(width/2, height/2);
   sun.display();
   sun.orbit();
-    rotateY(phase);
-       translate(200, 0, 0);
-  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp);
-  popMatrix(); 
-  
+  rotateY(phase);
+  translate(200, 0, 200);
+  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
+  planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+
   ////////////////////////////////////////////////////
-  
+
   //sphere(100);
   //    rotateY(phase * 2);
   //     translate(200, 0, 0);
   //planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp);
+  pushMatrix();
+  rotateY(phase);
+  translate(-100, 0, -100);
+  planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
+    planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
   
-  planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp);
-  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp);
-  planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp);
-  phase += sun.planets[0].orbitSpeed;
+  pushMatrix();
+  rotateY(phase);
+  translate(200, -100, 0);
+  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
+    planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  pushMatrix();
+  rotateY(phase);
+  translate(-200, 100, 0);
+  planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
+    planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  //phase += sun.planets[0].orbitSpeed;
+  phase += speed;
+  count++;
+  if(count % 40 == 0 && count != 0){
+    daysPassed++;
+    if(daysPassed >= 91){
+      daysPassed = 0;
+    }
+    println(daysPassed);
+  }
   ////////////////////////////////////////////////////
-  
-  if(isCamActive){
+
+  if (isCamActive) {
     cam.setActive(true);
   } else {
     cam.setActive(false);
   }
-  
-  gui();  
+
+  gui();
 }
 
-void ToggleCam(boolean val){
+void ToggleCam(boolean val) {
   isCamActive = val;
 }
 
@@ -223,15 +252,15 @@ void gui() {
   hint(ENABLE_DEPTH_TEST);
 }
 
-void volume(float vol){
+void volume(float vol) {
   volume = vol;
   sound.amp(volume);
 }
 
-void speedOrbit(float s){
+void speedOrbit(float s) {
   speedOrbit = s;
   sun.orbitSpeed = s;
-  for (Planet p: sun.planets){
+  for (Planet p : sun.planets) {
     if (p != null) p.orbitSpeed = s;
   }
 }
@@ -376,5 +405,6 @@ void CompleteDataSetup() {
 
   total = monthtemps4.size();
   globe = new PVector[total+1][total+1];
+ // zzprintln(frameRate);
 }
 ///////////////////////////////////////////////////////////////////////////

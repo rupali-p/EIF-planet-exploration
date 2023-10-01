@@ -1,6 +1,6 @@
 class FPlanet {
   
-  void CreatePlanetMain(FloatList colour, FloatList shape, float phase, float avgTemp) {
+  void CreatePlanetMain(FloatList colour, FloatList shape, float phase, float avgTemp, int dayCount) {
     push();
      // rotateX(phase/2);
     rotateY(phase/2);
@@ -13,13 +13,13 @@ class FPlanet {
         float lon = map(j, 0, total, 0, TWO_PI);
 
         if (i < total) {
-          thisTemp = shape.get(i);
+          thisTemp = shape.get(dayCount);
         }
         float xoff = map(sin(lat)*cos(lon), 0, 1, 0, thisTemp);
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = map(pNoise, 0, 1, 50, 70); //MAKE THIS ADJUSTABLE
+        float r = map(pNoise, 0, 1, 20, 23); //MAKE THIS ADJUSTABLE
 
         float x = r * sin(lat) * cos(lon);
         float y = r * sin(lat) * sin(lon);
@@ -31,7 +31,7 @@ class FPlanet {
           PVector v2 = globe[i][j];
 
           if (i < total) {
-            float thisTemp = colour.get(i);
+            float thisTemp = colour.get(dayCount);
             float cNoise = noise(phase + thisTemp + colorMutator * v1.x, phase + thisTemp + colorMutator * v1.y, phase + thisTemp + colorMutator * v1.z);
             float hu = map(cNoise, 0, 1, 0, 255);
 
@@ -52,7 +52,7 @@ class FPlanet {
     pop();
   }
 
-  void CreatePlanetAtmosphere(FloatList atmoData, float phase) {
+  void CreatePlanetAtmosphere(FloatList atmoData, float phase, int dayCount) {
     push();
 
     // Add some rotation
@@ -68,13 +68,13 @@ class FPlanet {
         float lon = map(j, 0, total, 0, TWO_PI);
 
         if (i < total) {
-          thisTemp = atmoData.get(i);
+          thisTemp = atmoData.get(dayCount);
         }
         float xoff = map(sin(lat)*cos(lon), 0, 1, 0, thisTemp);
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = map(pNoise, 0, 1, 70, 75);
+        float r = map(pNoise, 0, 1, 22, 24);
 
 
         float x = r * sin(lat) * cos(lon);
@@ -87,7 +87,7 @@ class FPlanet {
           PVector v2 = globe[i][j];
 
           if (i < total) {
-            float thisTemp = atmoData.get(i);
+            float thisTemp = atmoData.get(dayCount);
             float cNoise = noise(phase + thisTemp + colorMutator * v1.x, phase + thisTemp + colorMutator * v1.y, phase + thisTemp + colorMutator * v1.z);
             float hu = map(cNoise, 0, 1, 0, 255);
             noFill();
