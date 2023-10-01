@@ -17,7 +17,7 @@ PImage backgroundImg;
 
 
 float zoomFactor = 0.75;
-float ZOOMTHRESHOLD = 1.0;
+float ZOOMTHRESHOLD = 1.5;
 PVector zoomCenter;
 Button panButton;
 Button button1;
@@ -29,7 +29,6 @@ int WIDTHFIFTH;
 boolean pan = false;
 boolean displayPlanets = true;
 PGraphics mask;
-HashMap<String, String> textMap; // Map to store dynamic texts
 boolean button1Clicked = false;
 boolean button2Clicked = false;
 boolean button3Clicked = false;
@@ -119,14 +118,6 @@ void setup(){
   mask.noStroke();
   mask.fill(0, 0, 0, 255); // Transparent black fill
   mask.endDraw();
-
-  textMap = new HashMap<String, String>();
-  textMap.put("PanEnabledThresholdCrossed", "Pan is enabled.\nThreshold crossed.");
-  textMap.put("PanEnabledThresholdNotCrossed", "Pan is enabled.\nThreshold not crossed.");
-  textMap.put("PanDisabledThresholdCrossed", "Pan is disabled.\nThreshold crossed.");
-  textMap.put("PanDisabledThresholdNotCrossed", "Pan is disabled.\nThreshold not crossed.");
-  textMap.put("PanEnabled", "Pan is enabled.");
-  textMap.put("PanDisabled", "Pan is disabled.");
   hint(ENABLE_DEPTH_TEST);
 }
 
@@ -140,14 +131,12 @@ void draw() {
   }
   println("cam active: " + isCamActive);
   if (displayPlanets) {
-    cam.beginHUD();
-    translate(2 * WIDTHFIFTH, 2 * HEIGHTFIFTH);
+    translate(-100, 0);
     pushMatrix();
     sun.display();
     sun.orbit();
     gui();
     popMatrix();
-    cam.endHUD();
   }
 
   float cameraZ = 300 / tan(PI/6);
@@ -230,7 +219,7 @@ void pov() {
 }
 
 void Zoom(float theValue) {
-  zoomFactor = map(theValue, 0, 100, 0.5, 2.0);
+  zoomFactor = map(theValue, 0, 100, 0.75, 2.0);
   zoomCenter.set(width / 2, height / 2);
 }
 
@@ -272,28 +261,17 @@ void switchButtons() {
 }
 
 void displayText(){
-   //Display dynamic text in the right column
+  //Display dynamic text in the right column
   fill(0);
   textAlign(LEFT);
   textSize(16);
-
-  // Determine the appropriate text based on zoomFactor and pan state
-  String currentTextKey = "";
-  if (pan) {
-    if (zoomFactor >= ZOOMTHRESHOLD) {
-      currentTextKey = "PanEnabledThresholdCrossed";
-    } else {
-      currentTextKey = "PanEnabled";
-    }
-  } else {
-    if (zoomFactor >= ZOOMTHRESHOLD) {
-      currentTextKey = "PanDisabledThresholdCrossed";
-    } else {
-      currentTextKey = "PanDisabled";
-    }
+  String panStatus = "Disabled";
+  String thresholdStatus = "Not ";
+  if (pan){
+    panStatus = "Enabled";
   }
-  String currentText = textMap.get(currentTextKey);
-  if (currentText != null) {
-    text(currentText, 4 * WIDTHFIFTH + 10, HEIGHTFIFTH);
+  if (zoomFactor >= ZOOMTHRESHOLD) {
+    thresholdStatus = "";
   }
+  text("Pan is " + panStatus + "\nThreshold " + thresholdStatus + "Crossed" + "\nZoom Factor: " + String.valueOf(zoomFactor), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH - 10);
 }
