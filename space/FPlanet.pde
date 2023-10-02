@@ -23,7 +23,7 @@ class FPlanet {
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = map(pNoise, 0, 1, size, size + range); //MAKE THIS ADJUSTABLE
+        float r = map(pNoise, 0, 1, size, size + range);
 
         float x = r * sin(lat) * cos(lon);
         float y = r * sin(lat) * sin(lon);
@@ -78,7 +78,7 @@ class FPlanet {
         float yoff = map(sin(lat) * sin(lon), 0, 1, 0, thisTemp);
         float zoff = map(cos(lat), -1, 1, 0, thisTemp);
         float pNoise = noise(xoff, yoff, zoff);
-        float r = map(pNoise, 0, 1, size + size/10, size + size/9);
+        float r = map(pNoise, 0, 1, size + roughness/2, size + roughness/1.5);
 
 
         float x = r * sin(lat) * cos(lon);

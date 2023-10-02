@@ -1,4 +1,4 @@
-import controlP5.*; //<>// //<>//
+import controlP5.*; //<>// //<>// //<>// //<>//
 ControlP5 cp5;
 
 import peasy.*;
@@ -242,9 +242,8 @@ void setup() {
   hint(ENABLE_DEPTH_TEST);
   //gui();
   // the surface images for 4 planets
-  
-    CreatePlanetSliders();
 
+  CreatePlanetSliders();
 }
 
 ////////////////////////////////////////////////////
@@ -311,17 +310,14 @@ void draw() {
 
 
     //float speedOrbitValue = speedOrbit.getValue(); // Declare as float, not int
-    float speedValue = cp5.getController("speedOrbit").getValue();
+   // float speedValue = ;
 
-    planet1.orbit(speedValue);
-    planet2.orbit(speedValue);
-    planet3.orbit(speedValue);
-    planet4.orbit(speedValue);
-
+   // planet1.orbit(speedValue);
+   // planet2.orbit(speedValue);
+   // planet3.orbit(speedValue);
+   // planet4.orbit(speedValue);
   }
   ////////////////////////////////////////////////////
-
-
 
   float cameraZ = 300 / tan(PI/6);
   Zoom(mySlider.getValue());
@@ -329,6 +325,28 @@ void draw() {
   if (zoomFactor >= ZOOMTHRESHOLD) {
     pov();
     scale(zoomFactor);
+    translate(-25, -25, 0);
+    if (button1Clicked) {
+      pushMatrix();
+      planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed, cp5.getController("Planet1Size").getValue() * 2, cp5.getController("Planet1Roughness").getValue() * 2, speedOrbit);
+      planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet1Size").getValue() * 2, cp5.getController("Planet1Roughness").getValue() * 2, cp5.getController("Atmosphere1AlphaDiv").getValue());
+      popMatrix();
+    } else if (button2Clicked) {
+      pushMatrix();
+      planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed, cp5.getController("Planet2Size").getValue() * 2, cp5.getController("Planet2Roughness").getValue() * 2, speedOrbit);
+      planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet2Size").getValue() * 2, cp5.getController("Planet2Roughness").getValue() * 2, cp5.getController("Atmosphere2AlphaDiv").getValue());
+      popMatrix();
+    } else if (button3Clicked) {
+      pushMatrix();
+      planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed, cp5.getController("Planet3Size").getValue() * 2, cp5.getController("Planet3Roughness").getValue() * 2, speedOrbit);
+      planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet3Size").getValue() * 2, cp5.getController("Planet3Roughness").getValue() * 2, cp5.getController("Atmosphere3AlphaDiv").getValue());
+      popMatrix();
+    } else if (button4Clicked) {
+      pushMatrix();
+      planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed, cp5.getController("Planet4Size").getValue() * 2, cp5.getController("Planet4Roughness").getValue() * 2, speedOrbit);
+      planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet4Size").getValue() * 2, cp5.getController("Planet4Roughness").getValue() * 2, cp5.getController("Atmosphere4AlphaDiv").getValue());
+      popMatrix();
+    }
   } else {
     displayPlanets = true;
     //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
@@ -349,7 +367,7 @@ void draw() {
 
 
   //phase += sun.planets[0].orbitSpeed;
-  phase += speed;
+  phase += cp5.getController("speedOrbit").getValue();
   count++;
   if (count % 40 == 0 && count != 0) {
     daysPassed++;
@@ -653,12 +671,11 @@ void displayText() {
     cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
     cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
     cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
-    
   } else if (button2Clicked) {
     thisTempList = monthtemps2;
     thisSolarList = monthsolars2;
     thisRainList = monthrains2;
-    
+
     cp5.getController("Planet1Size").setVisible(false);
     cp5.getController("Planet2Size").setVisible(true);
     cp5.getController("Planet3Size").setVisible(false);
@@ -673,12 +690,11 @@ void displayText() {
     cp5.getController("Atmosphere2AlphaDiv").setVisible(true);
     cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
     cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
-    
   } else if (button3Clicked) {
     thisTempList = monthtemps3;
     thisSolarList = monthsolars3;
     thisRainList = monthrains3;
-    
+
     cp5.getController("Planet1Size").setVisible(false);
     cp5.getController("Planet2Size").setVisible(false);
     cp5.getController("Planet3Size").setVisible(true);
@@ -693,12 +709,11 @@ void displayText() {
     cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
     cp5.getController("Atmosphere3AlphaDiv").setVisible(true);
     cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
-    
   } else if (button4Clicked) {
     thisTempList = monthtemps4;
     thisSolarList = monthsolars4;
     thisRainList = monthrains4;
-    
+
     cp5.getController("Planet1Size").setVisible(false);
     cp5.getController("Planet2Size").setVisible(false);
     cp5.getController("Planet3Size").setVisible(false);
@@ -722,7 +737,7 @@ void displayText() {
     text(nf(thisSolarList.get(daysPassed), 0, 2), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 180);
     text("Rainfall (Atmosphere): ", 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 200);
     text(nf(thisRainList.get(daysPassed), 0, 2), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 220);
-   // cp5.getController("Planet Size").setVisible(false);
+    // cp5.getController("Planet Size").setVisible(false);
   }
 }
 
