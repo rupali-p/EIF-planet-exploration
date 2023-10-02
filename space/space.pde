@@ -1,4 +1,4 @@
-import controlP5.*;
+import controlP5.*; //<>// //<>//
 ControlP5 cp5;
 
 import peasy.*;
@@ -26,6 +26,7 @@ Button panButton;
 Button button1;
 Button button2;
 Button button3;
+Button button4;
 Slider mySlider;
 int HEIGHTFIFTH;
 int WIDTHFIFTH;
@@ -35,6 +36,7 @@ PGraphics mask;
 boolean button1Clicked = false;
 boolean button2Clicked = false;
 boolean button3Clicked = false;
+boolean button4Clicked = false;
 
 ///////////////////////////////////////////////////////////////////////////
 PVector[][] globe;
@@ -58,6 +60,18 @@ FPlanet planet1;
 FPlanet planet2;
 FPlanet planet3;
 FPlanet planet4;
+
+int planet1Size = 20;
+int planet1SizeRange = 3;
+
+int planet2Size = 20;
+int planet2SizeRange = 3;
+
+int planet3Size = 20;
+int planet3SizeRange = 3;
+
+int planet4Size = 20;
+int planet4SizeRange = 3;
 
 //TEMPS
 Table tempTable;
@@ -106,12 +120,8 @@ float avgSolar;
 float solarDayCount;
 float maxSolarValue = 0;
 float minSolarValue = 1000;
-//SOLAR RADITION - https://eif-research.feit.uts.edu.au/graph/?rFromDate=2021-01-01T00%3A00&rToDate=2021-12-31T23%3A59%3A59&rFamily=weather&rSensor=SR
 
 ///////////////////////////////////////////////////////////////////////////
-
-
-
 
 void setup() {
   // frameRate(120);
@@ -198,19 +208,24 @@ void setup() {
     .setCaptionLabel("Click to Pan");
 
   button1 = cp5.addButton("Button1")
-    .setPosition(4 * WIDTHFIFTH + 20, HEIGHTFIFTH + 40)
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 40)
     .setSize(40, 40)
-    .setCaptionLabel("Button 1");
+    .setCaptionLabel("Planet 1");
 
   button2 = cp5.addButton("Button2")
-    .setPosition(4 * WIDTHFIFTH + 70, HEIGHTFIFTH + 40)
+    .setPosition(4 * WIDTHFIFTH + 60, HEIGHTFIFTH + 40)
     .setSize(40, 40)
-    .setCaptionLabel("Button 2");
+    .setCaptionLabel("Planet 2");
 
   button3 = cp5.addButton("Button3")
-    .setPosition(4 * WIDTHFIFTH + 120, HEIGHTFIFTH + 40)
+    .setPosition(4 * WIDTHFIFTH + 110, HEIGHTFIFTH + 40)
     .setSize(40, 40)
-    .setCaptionLabel("Button 3");
+    .setCaptionLabel("Planet 3");
+
+  button4 = cp5.addButton("Button4")
+    .setPosition(4 * WIDTHFIFTH + 160, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Planet 4");
 
   mySlider = cp5.addSlider("Zoom")
     .setPosition(2 * HEIGHTFIFTH + 220, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
@@ -225,8 +240,11 @@ void setup() {
   mask.fill(0, 0, 0, 255); // Transparent black fill
   mask.endDraw();
   hint(ENABLE_DEPTH_TEST);
- //gui();
+  //gui();
   // the surface images for 4 planets
+  
+    CreatePlanetSliders();
+
 }
 
 ////////////////////////////////////////////////////
@@ -252,38 +270,37 @@ void draw() {
 
   println("cam active: " + isCamActive);
   if (displayPlanets) {
-    scale(zoomFactor); 
-    translate(-100,0, 0);
+    scale(zoomFactor);
+    translate(-100, 0, 0);
     pushMatrix();
     sun.display();
     sun.orbit();
     pushMatrix();
     rotateY(phase);
     translate(200, 0, 200);
-    planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
-    planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed, cp5.getController("Planet1Size").getValue(), cp5.getController("Planet1Roughness").getValue());
+    planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet1Size").getValue(), cp5.getController("Planet1Roughness").getValue(), cp5.getController("Atmosphere1AlphaDiv").getValue());
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(-100, 0, -100);
-    planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
-    planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed, cp5.getController("Planet2Size").getValue(), cp5.getController("Planet2Roughness").getValue());
+    planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet2Size").getValue(), cp5.getController("Planet2Roughness").getValue(), cp5.getController("Atmosphere2AlphaDiv").getValue());
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(200, -100, 0);
-    planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
-    planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed, cp5.getController("Planet3Size").getValue(), cp5.getController("Planet3Roughness").getValue());
+    planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet3Size").getValue(), cp5.getController("Planet3Roughness").getValue(), cp5.getController("Atmosphere3AlphaDiv").getValue());
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(-200, 100, 0);
-    planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
-    planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed, cp5.getController("Planet4Size").getValue(), cp5.getController("Planet4Roughness").getValue());
+    planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet4Size").getValue(), cp5.getController("Planet4Roughness").getValue(), cp5.getController("Atmosphere4AlphaDiv").getValue());
     popMatrix();
     gui();
     popMatrix();
-
   }
   ////////////////////////////////////////////////////
 
@@ -294,10 +311,10 @@ void draw() {
 
   if (zoomFactor >= ZOOMTHRESHOLD) {
     pov();
-    scale(zoomFactor); 
+    scale(zoomFactor);
   } else {
     displayPlanets = true;
- //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
+    //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
     translate(width / 2, height / 2);
     scale(zoomFactor);
     lights();
@@ -331,31 +348,6 @@ void ToggleCam(boolean val) {
 
   isCamActive = val;
 }
-
-
-/* float cameraZ = 300 / tan(PI/6);
- Zoom(mySlider.getValue());
- 
- if (zoomFactor >= ZOOMTHRESHOLD) {
- pov();
- } else {
- displayPlanets = true;
- perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
- translate(width / 2, height / 2);
- scale(zoomFactor);
- lights();
- hint(DISABLE_DEPTH_TEST);
- }
- hint(DISABLE_DEPTH_TEST);
- cam.beginHUD();
- fill(150);
- rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
- rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
- displayText();
- cam.endHUD();
- hint(ENABLE_DEPTH_TEST);
- gui();*/
-
 
 void gui() {
   hint(DISABLE_DEPTH_TEST);
@@ -572,17 +564,34 @@ void mousePressed() {
   }
 
   // Check if any of the additional buttons were clicked
-  if (mouseX >= 4 * WIDTHFIFTH + 20 && mouseX <= 4 * WIDTHFIFTH + 60 &&
+  if (mouseX >= 4 * WIDTHFIFTH + 10 && mouseX <= 4 * WIDTHFIFTH + 50 &&
     mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button1Clicked = !button1Clicked;
+    button2Clicked = false;
+    button3Clicked = false;
+    button4Clicked = false;
   }
-  if (mouseX >= 4 * WIDTHFIFTH + 70 && mouseX <= 4 * WIDTHFIFTH + 110 &&
+  if (mouseX >= 4 * WIDTHFIFTH + 60 && mouseX <= 4 * WIDTHFIFTH + 100 &&
     mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button2Clicked = !button2Clicked;
+    button1Clicked = false;
+    button3Clicked = false;
+    button4Clicked = false;
   }
-  if (mouseX >= 4 * WIDTHFIFTH + 120 && mouseX <= 4 * WIDTHFIFTH + 160 &&
+  if (mouseX >= 4 * WIDTHFIFTH + 110 && mouseX <= 4 * WIDTHFIFTH + 150 &&
     mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button3Clicked = !button3Clicked;
+    button2Clicked = false;
+    button1Clicked = false;
+    button4Clicked = false;
+  }
+
+  if (mouseX >= 4 * WIDTHFIFTH + 160 && mouseX <= 4 * WIDTHFIFTH + 200 &&
+    mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button4Clicked = !button4Clicked;
+    button2Clicked = false;
+    button3Clicked = false;
+    button1Clicked = false;
   }
 
   // Print which buttons have been clicked
@@ -610,4 +619,183 @@ void displayText() {
     thresholdStatus = "";
   }
   text("Pan is " + panStatus + "\nThreshold " + thresholdStatus + "Crossed" + "\nZoom Factor: " + String.valueOf(zoomFactor), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH - 10);
+  text("Day " + daysPassed, 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 100);
+  FloatList thisTempList = monthtemps1;
+  FloatList thisSolarList = monthsolars1;
+  FloatList thisRainList = monthrains1;
+  if (button1Clicked) {
+    thisTempList = monthtemps1;
+    thisSolarList = monthsolars1;
+    thisRainList = monthrains1;
+    cp5.getController("Planet1Size").setVisible(true);
+    cp5.getController("Planet2Size").setVisible(false);
+    cp5.getController("Planet3Size").setVisible(false);
+    cp5.getController("Planet4Size").setVisible(false);
+
+    cp5.getController("Planet1Roughness").setVisible(true);
+    cp5.getController("Planet2Roughness").setVisible(false);
+    cp5.getController("Planet3Roughness").setVisible(false);
+    cp5.getController("Planet4Roughness").setVisible(false);
+
+    cp5.getController("Atmosphere1AlphaDiv").setVisible(true);
+    cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
+    
+  } else if (button2Clicked) {
+    thisTempList = monthtemps2;
+    thisSolarList = monthsolars2;
+    thisRainList = monthrains2;
+    
+    cp5.getController("Planet1Size").setVisible(false);
+    cp5.getController("Planet2Size").setVisible(true);
+    cp5.getController("Planet3Size").setVisible(false);
+    cp5.getController("Planet4Size").setVisible(false);
+
+    cp5.getController("Planet1Roughness").setVisible(false);
+    cp5.getController("Planet2Roughness").setVisible(true);
+    cp5.getController("Planet3Roughness").setVisible(false);
+    cp5.getController("Planet4Roughness").setVisible(false);
+
+    cp5.getController("Atmosphere1AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere2AlphaDiv").setVisible(true);
+    cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
+    
+  } else if (button3Clicked) {
+    thisTempList = monthtemps3;
+    thisSolarList = monthsolars3;
+    thisRainList = monthrains3;
+    
+    cp5.getController("Planet1Size").setVisible(false);
+    cp5.getController("Planet2Size").setVisible(false);
+    cp5.getController("Planet3Size").setVisible(true);
+    cp5.getController("Planet4Size").setVisible(false);
+
+    cp5.getController("Planet1Roughness").setVisible(false);
+    cp5.getController("Planet2Roughness").setVisible(false);
+    cp5.getController("Planet3Roughness").setVisible(true);
+    cp5.getController("Planet4Roughness").setVisible(false);
+
+    cp5.getController("Atmosphere1AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere3AlphaDiv").setVisible(true);
+    cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
+    
+  } else if (button4Clicked) {
+    thisTempList = monthtemps4;
+    thisSolarList = monthsolars4;
+    thisRainList = monthrains4;
+    
+    cp5.getController("Planet1Size").setVisible(false);
+    cp5.getController("Planet2Size").setVisible(false);
+    cp5.getController("Planet3Size").setVisible(false);
+    cp5.getController("Planet4Size").setVisible(true);
+
+    cp5.getController("Planet1Roughness").setVisible(false);
+    cp5.getController("Planet2Roughness").setVisible(false);
+    cp5.getController("Planet3Roughness").setVisible(false);
+    cp5.getController("Planet4Roughness").setVisible(true);
+
+    cp5.getController("Atmosphere1AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
+    cp5.getController("Atmosphere4AlphaDiv").setVisible(true);
+  }
+
+  if (button1Clicked || button2Clicked || button3Clicked || button4Clicked) {
+    text("Temperature (Colour) : ", 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 120);
+    text(nf(thisTempList.get(daysPassed), 0, 2), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 140);
+    text("Solar Radiation (Texture) : ", 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 160);
+    text(nf(thisSolarList.get(daysPassed), 0, 2), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 180);
+    text("Rainfall (Atmosphere): ", 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 200);
+    text(nf(thisRainList.get(daysPassed), 0, 2), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 220);
+   // cp5.getController("Planet Size").setVisible(false);
+  }
+}
+
+void CreatePlanetSliders() {
+  cp5.addSlider("Planet1Size")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 240)
+    .setSize(100, 20)
+    .setRange(5, 100)
+    .setValue(20);
+  cp5.getController("Planet1Size").setVisible(false);
+
+  cp5.addSlider("Planet2Size")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 240)
+    .setSize(100, 20)
+    .setRange(5, 100)
+    .setValue(20);
+  cp5.getController("Planet2Size").setVisible(false);
+
+  cp5.addSlider("Planet3Size")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 240)
+    .setSize(100, 20)
+    .setRange(5, 100)
+    .setValue(20);
+  cp5.getController("Planet3Size").setVisible(false);
+
+  cp5.addSlider("Planet4Size")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 240)
+    .setSize(100, 20)
+    .setRange(5, 100)
+    .setValue(20);
+  cp5.getController("Planet4Size").setVisible(false);
+
+  cp5.addSlider("Planet1Roughness")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 270)
+    .setSize(100, 20)
+    .setRange(0, 50)
+    .setValue(3);
+  cp5.getController("Planet1Roughness").setVisible(false);
+
+  cp5.addSlider("Planet2Roughness")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 270)
+    .setSize(100, 20)
+    .setRange(0, 50)
+    .setValue(3);
+  cp5.getController("Planet2Roughness").setVisible(false);
+
+  cp5.addSlider("Planet3Roughness")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 270)
+    .setSize(100, 20)
+    .setRange(0, 50)
+    .setValue(3);
+  cp5.getController("Planet3Roughness").setVisible(false);
+
+  cp5.addSlider("Planet4Roughness")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 270)
+    .setSize(100, 20)
+    .setRange(0, 50)
+    .setValue(3);
+  cp5.getController("Planet4Roughness").setVisible(false);
+
+  cp5.addSlider("Atmosphere1AlphaDiv")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 300)
+    .setSize(100, 20)
+    .setRange(1, 10)
+    .setValue(2);
+  cp5.getController("Atmosphere1AlphaDiv").setVisible(false);
+
+  cp5.addSlider("Atmosphere2AlphaDiv")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 300)
+    .setSize(100, 20)
+    .setRange(1, 10)
+    .setValue(2);
+  cp5.getController("Atmosphere2AlphaDiv").setVisible(false);
+
+  cp5.addSlider("Atmosphere3AlphaDiv")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 300)
+    .setSize(100, 20)
+    .setRange(1, 10)
+    .setValue(2);
+  cp5.getController("Atmosphere3AlphaDiv").setVisible(false);
+
+  cp5.addSlider("Atmosphere4AlphaDiv")
+    .setPosition(4 * WIDTHFIFTH + 10, HEIGHTFIFTH + 300)
+    .setSize(100, 20)
+    .setRange(1, 10)
+    .setValue(2);
+  cp5.getController("Atmosphere4AlphaDiv").setVisible(false);
 }
