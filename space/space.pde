@@ -225,6 +225,7 @@ void setup() {
   mask.fill(0, 0, 0, 255); // Transparent black fill
   mask.endDraw();
   hint(ENABLE_DEPTH_TEST);
+ //gui();
   // the surface images for 4 planets
 }
 
@@ -233,6 +234,10 @@ float xoff = 0;
 ////////////////////////////////////////////////////
 
 void draw() {
+    if (!dataSetup) {
+    CompleteDataSetup();
+    dataSetup = true;
+  }
   background(backgroundImg);
   panLabeling();
   if (isCamActive) {
@@ -243,15 +248,16 @@ void draw() {
   }
   //gui();
   ////////////////////////////////////////////////////
-  if (!dataSetup) {
-    CompleteDataSetup();
-    dataSetup = true;
-  }
+
   ////////////////////////////////////////////////////
 
-  pushMatrix();
-  sun.display();
-  sun.orbit();
+  println("cam active: " + isCamActive);
+  if (displayPlanets) {
+    translate(-100,0, 0);
+    pushMatrix();
+    sun.display();
+    sun.orbit();
+          pushMatrix();
   rotateY(phase);
   translate(200, 0, 200);
   planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
@@ -275,27 +281,13 @@ void draw() {
   planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
   planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
   popMatrix();
-  //phase += sun.planets[0].orbitSpeed;
-  phase += speed;
-  count++;
-  if (count % 40 == 0 && count != 0) {
-    daysPassed++;
-    if (daysPassed >= 91) {
-      daysPassed = 0;
-    }
-    println(daysPassed);
+    gui();
+    popMatrix();
+
   }
   ////////////////////////////////////////////////////
 
-  println("cam active: " + isCamActive);
-  if (displayPlanets) {
-    translate(-100, 0);
-    pushMatrix();
-    sun.display();
-    sun.orbit();
-    gui();
-    popMatrix();
-  }
+
 
   float cameraZ = 300 / tan(PI/6);
   Zoom(mySlider.getValue());
@@ -304,7 +296,7 @@ void draw() {
     pov();
   } else {
     displayPlanets = true;
-    perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
+ //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
     translate(width / 2, height / 2);
     scale(zoomFactor);
     lights();
@@ -319,45 +311,50 @@ void draw() {
   cam.endHUD();
   hint(ENABLE_DEPTH_TEST);
   gui();
+
+
+  //phase += sun.planets[0].orbitSpeed;
+  phase += speed;
+  count++;
+  if (count % 40 == 0 && count != 0) {
+    daysPassed++;
+    if (daysPassed >= 91) {
+      daysPassed = 0;
+    }
+    println(daysPassed);
+  }
 }
 
 
 void ToggleCam(boolean val) {
 
-  println("cam active: " + isCamActive);
-  if (displayPlanets) {
-    translate(-100, 0);
-    pushMatrix();
-    sun.display();
-    sun.orbit();
-    gui();
-    popMatrix();
-  }
-
-
- /* float cameraZ = 300 / tan(PI/6);
-  Zoom(mySlider.getValue());
-
-  if (zoomFactor >= ZOOMTHRESHOLD) {
-    pov();
-  } else {
-    displayPlanets = true;
-    perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
-    translate(width / 2, height / 2);
-    scale(zoomFactor);
-    lights();
-    hint(DISABLE_DEPTH_TEST);
-  }
-  hint(DISABLE_DEPTH_TEST);
-  cam.beginHUD();
-  fill(150);
-  rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
-  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
-  displayText();
-  cam.endHUD();
-  hint(ENABLE_DEPTH_TEST);
-  gui();*/
+  isCamActive = val;
 }
+
+
+/* float cameraZ = 300 / tan(PI/6);
+ Zoom(mySlider.getValue());
+ 
+ if (zoomFactor >= ZOOMTHRESHOLD) {
+ pov();
+ } else {
+ displayPlanets = true;
+ perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
+ translate(width / 2, height / 2);
+ scale(zoomFactor);
+ lights();
+ hint(DISABLE_DEPTH_TEST);
+ }
+ hint(DISABLE_DEPTH_TEST);
+ cam.beginHUD();
+ fill(150);
+ rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
+ rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
+ displayText();
+ cam.endHUD();
+ hint(ENABLE_DEPTH_TEST);
+ gui();*/
+
 
 void gui() {
   hint(DISABLE_DEPTH_TEST);
@@ -433,13 +430,6 @@ void CompleteDataSetup() {
   }
   avgTemp = totalTemp / tempDayCount;
   tempRange = maxTempValue - minTempValue;
-
-  //RAIN DATA SET UP
-  rains = new FloatList();
-  monthrains1 = new FloatList();
-  monthrains2 = new FloatList();
-  monthrains3 = new FloatList();
-  monthrains4 = new FloatList();
 
   rainTable = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2022-01-28T00%3A00&rToDate=2022-12-31T23%3A59%3A59&rFamily=weather&rSensor=RT", "csv");
   rowCount = rainTable.getRowCount();
