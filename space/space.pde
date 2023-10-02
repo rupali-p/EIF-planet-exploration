@@ -234,14 +234,13 @@ float xoff = 0;
 ////////////////////////////////////////////////////
 
 void draw() {
-    if (!dataSetup) {
+  if (!dataSetup) {
     CompleteDataSetup();
     dataSetup = true;
   }
   background(backgroundImg);
   panLabeling();
   if (isCamActive) {
-
     cam.setActive(true);
   } else {
     cam.setActive(false);
@@ -253,34 +252,35 @@ void draw() {
 
   println("cam active: " + isCamActive);
   if (displayPlanets) {
+    scale(zoomFactor); 
     translate(-100,0, 0);
     pushMatrix();
     sun.display();
     sun.orbit();
-          pushMatrix();
-  rotateY(phase);
-  translate(200, 0, 200);
-  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
-  planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  pushMatrix();
-  rotateY(phase);
-  translate(-100, 0, -100);
-  planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
-  planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  pushMatrix();
-  rotateY(phase);
-  translate(200, -100, 0);
-  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
-  planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  pushMatrix();
-  rotateY(phase);
-  translate(-200, 100, 0);
-  planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
-  planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
+    pushMatrix();
+    rotateY(phase);
+    translate(200, 0, 200);
+    planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
+    planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    popMatrix();
+    pushMatrix();
+    rotateY(phase);
+    translate(-100, 0, -100);
+    planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
+    planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    popMatrix();
+    pushMatrix();
+    rotateY(phase);
+    translate(200, -100, 0);
+    planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
+    planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    popMatrix();
+    pushMatrix();
+    rotateY(phase);
+    translate(-200, 100, 0);
+    planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
+    planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+    popMatrix();
     gui();
     popMatrix();
 
@@ -294,6 +294,7 @@ void draw() {
 
   if (zoomFactor >= ZOOMTHRESHOLD) {
     pov();
+    scale(zoomFactor); 
   } else {
     displayPlanets = true;
  //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
@@ -305,8 +306,8 @@ void draw() {
   hint(DISABLE_DEPTH_TEST);
   cam.beginHUD();
   fill(150);
-  rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
-  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
+  rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH + 10);
+  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH + 10, height);
   displayText();
   cam.endHUD();
   hint(ENABLE_DEPTH_TEST);
