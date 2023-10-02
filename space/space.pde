@@ -1,3 +1,4 @@
+
 ///////////////////////////////////////////////////////////////////////////
 PVector[][] globe;
 int total;
@@ -84,10 +85,15 @@ SoundFile sound;
 float volume = 0.5;
 
 Planet sun;
+
 float speedOrbit = 0.005;
+
+float speed = 0.005;
+
 PImage sunImage;
 PImage[] planetImages;
 PImage backgroundImg;
+
 
 void setup() {
  // frameRate(120);
@@ -161,11 +167,71 @@ void setup() {
   cp5.setAutoDraw(false);
 
   // the surface images for 4 planets
+
+
+float zoomFactor = 0.75;
+float ZOOMTHRESHOLD = 1.5;
+PVector zoomCenter;
+Button panButton;
+Button button1;
+Button button2;
+Button button3;
+Slider mySlider;
+int HEIGHTFIFTH;
+int WIDTHFIFTH;
+boolean pan = false;
+boolean displayPlanets = true;
+PGraphics mask;
+boolean button1Clicked = false;
+boolean button2Clicked = false;
+boolean button3Clicked = false;
+
+void setup(){
+  size(900, 600, P3D);
+  backgroundImg = loadImage("space3.jpg");
+  backgroundImg.resize(width, height);
+  image(backgroundImg, 0, 0);
+  sunImage = loadImage("sun.jpg");
+  
+  sound = new SoundFile(this, "music1.mp3");
+  sound.amp(volume);
+  sound.loop();
+  
+  cam = new PeasyCam(this, 500);
+  cam.setMinimumDistance(5);
+  cam.setMaximumDistance(1000);
+  
+  //slider for the volume of the sound
+  cp5 = new ControlP5(this);
+  cp5.addSlider("volume")
+     .setPosition(100, 30)
+     .setSize(300, 20)
+     .setRange(0, 1)
+     .setValue(0.5)
+     ;
+     
+  //slider for controlling the speed of the planets   
+  cp5.addSlider("speed")
+     .setPosition(100, 70)
+     .setSize(300, 20)
+     .setRange(0, 0.01)
+     .setDecimalPrecision(3)
+     .setValue(0.005);
+
+  cp5.addToggle("ToggleCam")
+     .setPosition(100, 110)
+     .setSize(80, 20)
+     .setValue(isCamActive);
+
+  cp5.setAutoDraw(false);
+  
+
   planetImages = new PImage[4];
   planetImages[0] = loadImage("earth.jpg");
   planetImages[1] = loadImage("jupiter.jpg");
   planetImages[2] = loadImage("mars.jpg");
   planetImages[3] = loadImage("neptune.jpg");
+
 
   //create a new planet called sun
   sun = new Planet(100, 0, 0, 0, sunImage);
@@ -232,15 +298,103 @@ void draw() {
   ////////////////////////////////////////////////////
 
   if (isCamActive) {
+
+  
+  //sun = new Planet(100, 0, 0, 0, sunImage);
+  //sun.childrenPlanets(4);
+      
+  zoomCenter = new PVector(width / 2, height / 2);
+
+  HEIGHTFIFTH = height / 5;
+  WIDTHFIFTH = width / 5;
+  hint(DISABLE_DEPTH_TEST);
+  panButton = cp5.addButton("PanButton")
+    .setPosition(HEIGHTFIFTH, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
+    .setSize(200, 40)
+    .setCaptionLabel("Click to Pan");
+
+  button1 = cp5.addButton("Button1")
+    .setPosition(4 * WIDTHFIFTH + 20, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 1");
+
+  button2 = cp5.addButton("Button2")
+    .setPosition(4 * WIDTHFIFTH + 70, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 2");
+
+  button3 = cp5.addButton("Button3")
+    .setPosition(4 * WIDTHFIFTH + 120, HEIGHTFIFTH + 40)
+    .setSize(40, 40)
+    .setCaptionLabel("Button 3");
+
+  mySlider = cp5.addSlider("Zoom")
+    .setPosition(2 * HEIGHTFIFTH + 220, 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3))
+    .setSize(200, 40)
+    .setRange(0, 100)
+    .setValue(0);
+
+  mask = createGraphics(width, height);
+  mask.beginDraw();
+  mask.background(255); // Set the initial mask background to white
+  mask.noStroke();
+  mask.fill(0, 0, 0, 255); // Transparent black fill
+  mask.endDraw();
+  hint(ENABLE_DEPTH_TEST);
+}
+
+void draw() {
+  background(backgroundImg);
+  panLabeling();
+  if(isCamActive){
+
     cam.setActive(true);
   } else {
     cam.setActive(false);
   }
 
+
   gui();
 }
 
 void ToggleCam(boolean val) {
+
+  println("cam active: " + isCamActive);
+  if (displayPlanets) {
+    translate(-100, 0);
+    pushMatrix();
+    sun.display();
+    sun.orbit();
+    gui();
+    popMatrix();
+  }
+
+  float cameraZ = 300 / tan(PI/6);
+  Zoom(mySlider.getValue());
+
+  if (zoomFactor >= ZOOMTHRESHOLD) {
+    pov();
+  } else {
+    displayPlanets = true;
+    perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ*10.0);
+    translate(width / 2, height / 2);
+    scale(zoomFactor);
+    lights();
+    hint(DISABLE_DEPTH_TEST);
+  }
+  hint(DISABLE_DEPTH_TEST);
+  cam.beginHUD();
+  fill(150);
+  rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
+  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
+  displayText();
+  cam.endHUD();
+  hint(ENABLE_DEPTH_TEST);
+  gui();
+}
+
+void ToggleCam(boolean val){
+
   isCamActive = val;
 }
 
@@ -252,18 +406,26 @@ void gui() {
   hint(ENABLE_DEPTH_TEST);
 }
 
-void volume(float vol) {
+
+void volume(float vol){
   volume = vol;
   sound.amp(volume);
 }
+
 
 void speedOrbit(float s) {
   speedOrbit = s;
   sun.orbitSpeed = s;
   for (Planet p : sun.planets) {
+}
+void speed(float s){
+  speed = s;
+  sun.orbitSpeed = s;
+  for (Planet p: sun.planets){
     if (p != null) p.orbitSpeed = s;
   }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////
 void CompleteDataSetup() {
@@ -408,3 +570,92 @@ void CompleteDataSetup() {
  // zzprintln(frameRate);
 }
 ///////////////////////////////////////////////////////////////////////////
+
+void panLabeling() {
+  if (pan) {
+    panButton.getCaptionLabel().setText("Click to Disable Pan");
+  } else {
+    panButton.getCaptionLabel().setText("Click to Pan");
+  }
+  println("pan: " + pan);
+}
+
+void pov() {
+  if (zoomFactor >= ZOOMTHRESHOLD) {
+    displayPlanets = false;
+    mask.beginDraw();
+    mask.background(155); // Clear the mask
+    mask.noStroke();
+    mask.fill(0, 0, 0, 255); // Transparent black fill
+
+    if (pan) {
+      // Draw an inverted semi-circle in the mask when panning
+      mask.arc(map(mouseX, 0, width, 1.7 *  WIDTHFIFTH, width - 2.7 * WIDTHFIFTH), (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
+    } else {
+      // Draw a semi-circle in the mask when not panning
+      mask.arc((width / 2) - width / 10, (height / 2) + height/4.2 , width/1.5, 1.4 * height, PI, TWO_PI);
+    }
+
+    blend(mask, 0, 0, width, height, 0, 0, width, height, SCREEN);
+    mask.endDraw();
+  }
+}
+
+void Zoom(float theValue) {
+  zoomFactor = map(theValue, 0, 100, 0.75, 2.0);
+  zoomCenter.set(width / 2, height / 2);
+}
+
+void mousePressed() {
+  if (mouseX >= HEIGHTFIFTH && mouseX <= HEIGHTFIFTH + 200 &&
+      mouseY >= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) && mouseY <= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) + 40) {
+    if (pan) {
+      println("Pan mode disabled.");
+      pan = false;
+    } else {
+      println("Pan mode enabled.");
+      pan = true;
+    }
+  }
+  
+  // Check if any of the additional buttons were clicked
+  if (mouseX >= 4 * WIDTHFIFTH + 20 && mouseX <= 4 * WIDTHFIFTH + 60 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button1Clicked = !button1Clicked;
+  }
+  if (mouseX >= 4 * WIDTHFIFTH + 70 && mouseX <= 4 * WIDTHFIFTH + 110 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button2Clicked = !button2Clicked;
+  }
+  if (mouseX >= 4 * WIDTHFIFTH + 120 && mouseX <= 4 * WIDTHFIFTH + 160 &&
+      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    button3Clicked = !button3Clicked;
+  }
+  
+  // Print which buttons have been clicked
+  switchButtons();
+}
+
+
+void switchButtons() {
+  println("Button 1 clicked: " + button1Clicked);
+  println("Button 2 clicked: " + button2Clicked);
+  println("Button 3 clicked: " + button3Clicked);
+}
+
+void displayText(){
+  //Display dynamic text in the right column
+  fill(0);
+  textAlign(LEFT);
+  textSize(16);
+  String panStatus = "Disabled";
+  String thresholdStatus = "Not ";
+  if (pan){
+    panStatus = "Enabled";
+  }
+  if (zoomFactor >= ZOOMTHRESHOLD) {
+    thresholdStatus = "";
+  }
+  text("Pan is " + panStatus + "\nThreshold " + thresholdStatus + "Crossed" + "\nZoom Factor: " + String.valueOf(zoomFactor), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH - 10);
+}
+

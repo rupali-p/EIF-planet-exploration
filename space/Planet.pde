@@ -6,6 +6,7 @@ class Planet{
   float distance;
   float orbitSpeed;
   Planet planets[];
+
   PShape Globe;
   PVector v;
   
@@ -19,8 +20,10 @@ class Planet{
     this.orbitSpeed = orbitSpeed;
     noStroke();
     noFill();
+
     Globe = createShape(SPHERE, radius);
     Globe.setTexture(image);
+
   }
   
   void childrenPlanets(int num){
@@ -30,7 +33,9 @@ class Planet{
       float r = radius*0.35;
       float d = random(200, 250);
       float angle = angles[i];
+
       planets[i] = new Planet(r, d, angle, speedOrbit, planetImages[i]);
+
     }
   }
   
@@ -52,12 +57,14 @@ class Planet{
     PVector perpen = v.cross(v2);
     rotate(angle, perpen.x, perpen.y, perpen.z);
     translate(v.x, v.y, v.z);
+
     shape(Globe);
     
    
     if(planets != null) {
       for(int i = 0; i < planets.length; i++){
-        
+      scale(zoomFactor);  
+
         planets[i].display();
       }
     }
@@ -65,3 +72,4 @@ class Planet{
   }
   
 }
+
