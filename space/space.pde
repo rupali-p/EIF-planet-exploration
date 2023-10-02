@@ -308,14 +308,6 @@ void draw() {
     gui();
     popMatrix();
 
-
-    //float speedOrbitValue = speedOrbit.getValue(); // Declare as float, not int
-   // float speedValue = ;
-
-   // planet1.orbit(speedValue);
-   // planet2.orbit(speedValue);
-   // planet3.orbit(speedValue);
-   // planet4.orbit(speedValue);
   }
   ////////////////////////////////////////////////////
 
@@ -323,7 +315,6 @@ void draw() {
   Zoom(mySlider.getValue());
 
   if (zoomFactor >= ZOOMTHRESHOLD) {
-    pov();
     scale(zoomFactor);
     translate(-25, -25, 0);
     if (button1Clicked) {
@@ -347,6 +338,7 @@ void draw() {
       planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet4Size").getValue() * 2, cp5.getController("Planet4Roughness").getValue() * 2, cp5.getController("Atmosphere4AlphaDiv").getValue());
       popMatrix();
     }
+  pov();
   } else {
     displayPlanets = true;
     //   perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
@@ -558,11 +550,13 @@ void panLabeling() {
 void pov() {
   if (zoomFactor >= ZOOMTHRESHOLD) {
     displayPlanets = false;
+    hint(DISABLE_DEPTH_TEST);
     mask.beginDraw();
-    mask.background(155); // Clear the mask
+   
+    mask.background(backgroundImg); // Make the mask backgrounf
     mask.noStroke();
     mask.fill(0, 0, 0, 255); // Transparent black fill
-
+    
     if (pan) {
       // Draw an inverted semi-circle in the mask when panning
       mask.arc(map(mouseX, 0, width, 1.7 *  WIDTHFIFTH, width - 2.7 * WIDTHFIFTH), (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
@@ -570,9 +564,9 @@ void pov() {
       // Draw a semi-circle in the mask when not panning
       mask.arc((width / 2) - width / 10, (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
     }
-
-    blend(mask, 0, 0, width, height, 0, 0, width, height, SCREEN);
+    blend(mask, 0, 0, width, height, 0, 0, width, height, SUBTRACT);
     mask.endDraw();
+    hint(ENABLE_DEPTH_TEST);
   }
 }
 
