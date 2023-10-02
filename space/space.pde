@@ -1,3 +1,40 @@
+import controlP5.*;
+ControlP5 cp5;
+
+import peasy.*;
+PeasyCam cam;
+boolean isCamActive = false;
+
+import processing.sound.*;
+SoundFile sound;
+float volume = 0.5;
+
+Planet sun;
+
+float speedOrbit = 0.005;
+
+//float speed = 0.005;
+
+PImage sunImage;
+PImage[] planetImages;
+PImage backgroundImg;
+
+float zoomFactor = 0.75;
+float ZOOMTHRESHOLD = 1.5;
+PVector zoomCenter;
+Button panButton;
+Button button1;
+Button button2;
+Button button3;
+Slider mySlider;
+int HEIGHTFIFTH;
+int WIDTHFIFTH;
+boolean pan = false;
+boolean displayPlanets = true;
+PGraphics mask;
+boolean button1Clicked = false;
+boolean button2Clicked = false;
+boolean button3Clicked = false;
 
 ///////////////////////////////////////////////////////////////////////////
 PVector[][] globe;
@@ -12,9 +49,9 @@ int lasti;
 
 boolean dataSetup = false;
 
-int daysPassed; 
+int daysPassed;
 int count;
-//int framerate; 
+//int framerate;
 
 //PLANETS
 FPlanet planet1;
@@ -73,30 +110,11 @@ float minSolarValue = 1000;
 
 ///////////////////////////////////////////////////////////////////////////
 
-import controlP5.*;
-ControlP5 cp5;
 
-import peasy.*;
-PeasyCam cam;
-boolean isCamActive = false;
-
-import processing.sound.*;
-SoundFile sound;
-float volume = 0.5;
-
-Planet sun;
-
-float speedOrbit = 0.005;
-
-float speed = 0.005;
-
-PImage sunImage;
-PImage[] planetImages;
-PImage backgroundImg;
 
 
 void setup() {
- // frameRate(120);
+  // frameRate(120);
   size(1074, 647, P3D);
   backgroundImg = loadImage("space3.jpg");
   image(backgroundImg, 0, 0);
@@ -165,144 +183,10 @@ void setup() {
     .setValue(isCamActive);
 
   cp5.setAutoDraw(false);
-
-  // the surface images for 4 planets
-
-
-float zoomFactor = 0.75;
-float ZOOMTHRESHOLD = 1.5;
-PVector zoomCenter;
-Button panButton;
-Button button1;
-Button button2;
-Button button3;
-Slider mySlider;
-int HEIGHTFIFTH;
-int WIDTHFIFTH;
-boolean pan = false;
-boolean displayPlanets = true;
-PGraphics mask;
-boolean button1Clicked = false;
-boolean button2Clicked = false;
-boolean button3Clicked = false;
-
-void setup(){
-  size(900, 600, P3D);
-  backgroundImg = loadImage("space3.jpg");
-  backgroundImg.resize(width, height);
-  image(backgroundImg, 0, 0);
-  sunImage = loadImage("sun.jpg");
-  
-  sound = new SoundFile(this, "music1.mp3");
-  sound.amp(volume);
-  sound.loop();
-  
-  cam = new PeasyCam(this, 500);
-  cam.setMinimumDistance(5);
-  cam.setMaximumDistance(1000);
-  
-  //slider for the volume of the sound
-  cp5 = new ControlP5(this);
-  cp5.addSlider("volume")
-     .setPosition(100, 30)
-     .setSize(300, 20)
-     .setRange(0, 1)
-     .setValue(0.5)
-     ;
-     
-  //slider for controlling the speed of the planets   
-  cp5.addSlider("speed")
-     .setPosition(100, 70)
-     .setSize(300, 20)
-     .setRange(0, 0.01)
-     .setDecimalPrecision(3)
-     .setValue(0.005);
-
-  cp5.addToggle("ToggleCam")
-     .setPosition(100, 110)
-     .setSize(80, 20)
-     .setValue(isCamActive);
-
-  cp5.setAutoDraw(false);
-  
-
-  planetImages = new PImage[4];
-  planetImages[0] = loadImage("earth.jpg");
-  planetImages[1] = loadImage("jupiter.jpg");
-  planetImages[2] = loadImage("mars.jpg");
-  planetImages[3] = loadImage("neptune.jpg");
-
-
   //create a new planet called sun
   sun = new Planet(100, 0, 0, 0, sunImage);
   //sun.childrenPlanets(4); //sun has 4 children planets
-}
-////////////////////////////////////////////////////
-float xoff = 0;
-////////////////////////////////////////////////////
 
-void draw() {
-  background(backgroundImg);
-  ////////////////////////////////////////////////////
-  if (!dataSetup) {
-    CompleteDataSetup();
-    dataSetup = true;
-  }
-  ////////////////////////////////////////////////////
-
-  pushMatrix();
-  //translate(width/2, height/2);
-  sun.display();
-  sun.orbit();
-  rotateY(phase);
-  translate(200, 0, 200);
-  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
-  planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-
-  ////////////////////////////////////////////////////
-
-  //sphere(100);
-  //    rotateY(phase * 2);
-  //     translate(200, 0, 0);
-  //planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp);
-  pushMatrix();
-  rotateY(phase);
-  translate(-100, 0, -100);
-  planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
-    planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  
-  pushMatrix();
-  rotateY(phase);
-  translate(200, -100, 0);
-  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
-    planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  pushMatrix();
-  rotateY(phase);
-  translate(-200, 100, 0);
-  planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
-    planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
-  popMatrix();
-  //phase += sun.planets[0].orbitSpeed;
-  phase += speed;
-  count++;
-  if(count % 40 == 0 && count != 0){
-    daysPassed++;
-    if(daysPassed >= 91){
-      daysPassed = 0;
-    }
-    println(daysPassed);
-  }
-  ////////////////////////////////////////////////////
-
-  if (isCamActive) {
-
-  
-  //sun = new Planet(100, 0, 0, 0, sunImage);
-  //sun.childrenPlanets(4);
-      
   zoomCenter = new PVector(width / 2, height / 2);
 
   HEIGHTFIFTH = height / 5;
@@ -341,21 +225,102 @@ void draw() {
   mask.fill(0, 0, 0, 255); // Transparent black fill
   mask.endDraw();
   hint(ENABLE_DEPTH_TEST);
+  // the surface images for 4 planets
 }
+
+////////////////////////////////////////////////////
+float xoff = 0;
+////////////////////////////////////////////////////
 
 void draw() {
   background(backgroundImg);
   panLabeling();
-  if(isCamActive){
+  if (isCamActive) {
 
     cam.setActive(true);
   } else {
     cam.setActive(false);
   }
+  //gui();
+  ////////////////////////////////////////////////////
+  if (!dataSetup) {
+    CompleteDataSetup();
+    dataSetup = true;
+  }
+  ////////////////////////////////////////////////////
 
+  pushMatrix();
+  sun.display();
+  sun.orbit();
+  rotateY(phase);
+  translate(200, 0, 200);
+  planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed);
+  planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  pushMatrix();
+  rotateY(phase);
+  translate(-100, 0, -100);
+  planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed);
+  planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  pushMatrix();
+  rotateY(phase);
+  translate(200, -100, 0);
+  planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed);
+  planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  pushMatrix();
+  rotateY(phase);
+  translate(-200, 100, 0);
+  planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed);
+  planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed);
+  popMatrix();
+  //phase += sun.planets[0].orbitSpeed;
+  phase += speed;
+  count++;
+  if (count % 40 == 0 && count != 0) {
+    daysPassed++;
+    if (daysPassed >= 91) {
+      daysPassed = 0;
+    }
+    println(daysPassed);
+  }
+  ////////////////////////////////////////////////////
 
+  println("cam active: " + isCamActive);
+  if (displayPlanets) {
+    translate(-100, 0);
+    pushMatrix();
+    sun.display();
+    sun.orbit();
+    gui();
+    popMatrix();
+  }
+
+  float cameraZ = 300 / tan(PI/6);
+  Zoom(mySlider.getValue());
+
+  if (zoomFactor >= ZOOMTHRESHOLD) {
+    pov();
+  } else {
+    displayPlanets = true;
+    perspective(PI/3.0, float(width) / float(height), cameraZ/10.0, cameraZ/10.0);
+    translate(width / 2, height / 2);
+    scale(zoomFactor);
+    lights();
+    hint(DISABLE_DEPTH_TEST);
+  }
+  hint(DISABLE_DEPTH_TEST);
+  cam.beginHUD();
+  fill(150);
+  rect(0, 4 * HEIGHTFIFTH, width, HEIGHTFIFTH);
+  rect(4 * WIDTHFIFTH, 0, WIDTHFIFTH, height);
+  displayText();
+  cam.endHUD();
+  hint(ENABLE_DEPTH_TEST);
   gui();
 }
+
 
 void ToggleCam(boolean val) {
 
@@ -369,7 +334,8 @@ void ToggleCam(boolean val) {
     popMatrix();
   }
 
-  float cameraZ = 300 / tan(PI/6);
+
+ /* float cameraZ = 300 / tan(PI/6);
   Zoom(mySlider.getValue());
 
   if (zoomFactor >= ZOOMTHRESHOLD) {
@@ -390,12 +356,7 @@ void ToggleCam(boolean val) {
   displayText();
   cam.endHUD();
   hint(ENABLE_DEPTH_TEST);
-  gui();
-}
-
-void ToggleCam(boolean val){
-
-  isCamActive = val;
+  gui();*/
 }
 
 void gui() {
@@ -407,7 +368,7 @@ void gui() {
 }
 
 
-void volume(float vol){
+void volume(float vol) {
   volume = vol;
   sound.amp(volume);
 }
@@ -417,11 +378,12 @@ void speedOrbit(float s) {
   speedOrbit = s;
   sun.orbitSpeed = s;
   for (Planet p : sun.planets) {
+  }
 }
-void speed(float s){
+void speed(float s) {
   speed = s;
   sun.orbitSpeed = s;
-  for (Planet p: sun.planets){
+  for (Planet p : sun.planets) {
     if (p != null) p.orbitSpeed = s;
   }
 }
@@ -567,7 +529,7 @@ void CompleteDataSetup() {
 
   total = monthtemps4.size();
   globe = new PVector[total+1][total+1];
- // zzprintln(frameRate);
+  // zzprintln(frameRate);
 }
 ///////////////////////////////////////////////////////////////////////////
 
@@ -593,7 +555,7 @@ void pov() {
       mask.arc(map(mouseX, 0, width, 1.7 *  WIDTHFIFTH, width - 2.7 * WIDTHFIFTH), (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
     } else {
       // Draw a semi-circle in the mask when not panning
-      mask.arc((width / 2) - width / 10, (height / 2) + height/4.2 , width/1.5, 1.4 * height, PI, TWO_PI);
+      mask.arc((width / 2) - width / 10, (height / 2) + height/4.2, width/1.5, 1.4 * height, PI, TWO_PI);
     }
 
     blend(mask, 0, 0, width, height, 0, 0, width, height, SCREEN);
@@ -608,7 +570,7 @@ void Zoom(float theValue) {
 
 void mousePressed() {
   if (mouseX >= HEIGHTFIFTH && mouseX <= HEIGHTFIFTH + 200 &&
-      mouseY >= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) && mouseY <= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) + 40) {
+    mouseY >= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) && mouseY <= 4 * HEIGHTFIFTH + (HEIGHTFIFTH / 3) + 40) {
     if (pan) {
       println("Pan mode disabled.");
       pan = false;
@@ -617,21 +579,21 @@ void mousePressed() {
       pan = true;
     }
   }
-  
+
   // Check if any of the additional buttons were clicked
   if (mouseX >= 4 * WIDTHFIFTH + 20 && mouseX <= 4 * WIDTHFIFTH + 60 &&
-      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button1Clicked = !button1Clicked;
   }
   if (mouseX >= 4 * WIDTHFIFTH + 70 && mouseX <= 4 * WIDTHFIFTH + 110 &&
-      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button2Clicked = !button2Clicked;
   }
   if (mouseX >= 4 * WIDTHFIFTH + 120 && mouseX <= 4 * WIDTHFIFTH + 160 &&
-      mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
+    mouseY >= HEIGHTFIFTH + 40 && mouseY <= HEIGHTFIFTH + 80) {
     button3Clicked = !button3Clicked;
   }
-  
+
   // Print which buttons have been clicked
   switchButtons();
 }
@@ -643,14 +605,14 @@ void switchButtons() {
   println("Button 3 clicked: " + button3Clicked);
 }
 
-void displayText(){
+void displayText() {
   //Display dynamic text in the right column
   fill(0);
   textAlign(LEFT);
   textSize(16);
   String panStatus = "Disabled";
   String thresholdStatus = "Not ";
-  if (pan){
+  if (pan) {
     panStatus = "Enabled";
   }
   if (zoomFactor >= ZOOMTHRESHOLD) {
@@ -658,4 +620,3 @@ void displayText(){
   }
   text("Pan is " + panStatus + "\nThreshold " + thresholdStatus + "Crossed" + "\nZoom Factor: " + String.valueOf(zoomFactor), 4 * WIDTHFIFTH + 10, HEIGHTFIFTH - 10);
 }
-
