@@ -1,6 +1,7 @@
 class FPlanet {
-  
-  void CreatePlanetMain(FloatList colour, FloatList shape, float phase, float avgTemp, int dayCount) {
+  float orbitSpeed;
+  void CreatePlanetMain(FloatList colour, FloatList shape, float phase, float avgTemp, int dayCount, float orbitSpeed) {
+    this.orbitSpeed = orbitSpeed;
     push();
      // rotateX(phase/2);
     rotateY(phase/2);
@@ -54,7 +55,7 @@ class FPlanet {
 
   void CreatePlanetAtmosphere(FloatList atmoData, float phase, int dayCount) {
     push();
-
+      
     // Add some rotation
     rotateX(phase/2);
     rotateY(phase/2);
@@ -100,5 +101,8 @@ class FPlanet {
       endShape();
     }
     pop();
+  }
+ void orbit(float orbitSpeed){
+    this.orbitSpeed = orbitSpeed;
   }
 }
