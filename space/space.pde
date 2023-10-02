@@ -278,29 +278,46 @@ void draw() {
     pushMatrix();
     rotateY(phase);
     translate(200, 0, 200);
-    planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed, cp5.getController("Planet1Size").getValue(), cp5.getController("Planet1Roughness").getValue());
+
+    planet1.CreatePlanetMain(monthtemps1, monthsolars1, phase, avgTemp, daysPassed, cp5.getController("Planet1Size").getValue(), cp5.getController("Planet1Roughness").getValue(), speedOrbit);
     planet1.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet1Size").getValue(), cp5.getController("Planet1Roughness").getValue(), cp5.getController("Atmosphere1AlphaDiv").getValue());
+
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(-100, 0, -100);
-    planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed, cp5.getController("Planet2Size").getValue(), cp5.getController("Planet2Roughness").getValue());
+
+    planet2.CreatePlanetMain(monthtemps2, monthsolars2, phase, avgTemp, daysPassed, cp5.getController("Planet2Size").getValue(), cp5.getController("Planet2Roughness").getValue(), speedOrbit);
     planet2.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet2Size").getValue(), cp5.getController("Planet2Roughness").getValue(), cp5.getController("Atmosphere2AlphaDiv").getValue());
+
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(200, -100, 0);
-    planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed, cp5.getController("Planet3Size").getValue(), cp5.getController("Planet3Roughness").getValue());
+
+    planet3.CreatePlanetMain(monthtemps3, monthsolars3, phase, avgTemp, daysPassed, cp5.getController("Planet3Size").getValue(), cp5.getController("Planet3Roughness").getValue(), speedOrbit);
     planet3.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet3Size").getValue(), cp5.getController("Planet3Roughness").getValue(), cp5.getController("Atmosphere3AlphaDiv").getValue());
+
     popMatrix();
     pushMatrix();
     rotateY(phase);
     translate(-200, 100, 0);
-    planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed, cp5.getController("Planet4Size").getValue(), cp5.getController("Planet4Roughness").getValue());
+
+    planet4.CreatePlanetMain(monthtemps4, monthsolars4, phase, avgTemp, daysPassed, cp5.getController("Planet4Size").getValue(), cp5.getController("Planet4Roughness").getValue(), speedOrbit);
     planet4.CreatePlanetAtmosphere(monthrains1, phase, daysPassed, cp5.getController("Planet4Size").getValue(), cp5.getController("Planet4Roughness").getValue(), cp5.getController("Atmosphere4AlphaDiv").getValue());
     popMatrix();
     gui();
     popMatrix();
+
+
+    //float speedOrbitValue = speedOrbit.getValue(); // Declare as float, not int
+    float speedValue = cp5.getController("speedOrbit").getValue();
+
+    planet1.orbit(speedValue);
+    planet2.orbit(speedValue);
+    planet3.orbit(speedValue);
+    planet4.orbit(speedValue);
+
   }
   ////////////////////////////////////////////////////
 
@@ -364,20 +381,15 @@ void volume(float vol) {
 }
 
 
-void speedOrbit(float s) {
-  speedOrbit = s;
-  sun.orbitSpeed = s;
-  for (Planet p : sun.planets) {
-  }
-}
-void speed(float s) {
-  speed = s;
-  sun.orbitSpeed = s;
-  for (Planet p : sun.planets) {
-    if (p != null) p.orbitSpeed = s;
-  }
-}
-
+//void speedOrbit(float s) {
+//  speedOrbit = s;
+//  sun.orbitSpeed = s;
+//  if (sun.planets != null){
+//    for (Planet p : sun.planets) {
+//      if (p != null) p.orbitSpeed = s;
+//    }
+//  }
+//}
 
 ///////////////////////////////////////////////////////////////////////////
 void CompleteDataSetup() {
